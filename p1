@@ -1,0 +1,106 @@
+import kotlin.collections.ArrayList
+
+
+class Uhrzeit (val stunde : Int, val minute : Int )
+class Parkschein (val einfahrZeit : Uhrzeit, var ausfahrZeit : Uhrzeit)
+class Parkhaus (val parktarif: Double)
+
+
+
+fun main () {
+    val parkscheine: ArrayList<Parkschein> =  arrayListOf<Parkschein>( )
+    parkscheine.add(Parkschein(Uhrzeit(12, 20), Uhrzeit(14, 50)))
+    parkscheine.add(Parkschein(Uhrzeit(18, 40), Uhrzeit(22, 30)))
+    parkscheine.add(Parkschein(Uhrzeit(2, 0), Uhrzeit(21, 44)))
+    parkscheine.add(Parkschein(Uhrzeit(14, 48), Uhrzeit(15, 12)))
+    parkscheine.add(Parkschein(Uhrzeit(19, 1), Uhrzeit(22, 10)))
+    var park = parkscheine.size
+
+    var c = -1
+    var a = 60
+    var b = 24
+    var d = 0
+    var durchschnittlicheParkzeitMinute = 0.0
+    var durchschnittlicheParkzeitStunde = 0.0
+    for (p in parkscheine) {
+        c++
+
+        var parkzeitMinute = (60 - parkscheine[c].einfahrZeit.minute) + parkscheine[c].ausfahrZeit.minute
+        var parkzeitStunde = parkscheine[c].ausfahrZeit.stunde - parkscheine[c].einfahrZeit.stunde
+
+        if (parkscheine[c].ausfahrZeit.minute > parkscheine[c].einfahrZeit.minute) {
+            parkzeitMinute -= 60
+        }
+
+        if (parkzeitMinute >= 60) {
+            parkzeitMinute -= 60
+            parkzeitStunde += 1
+        }
+
+        if (parkzeitMinute < 60 && parkzeitStunde == 1 && parkscheine[c].einfahrZeit.minute > parkscheine[c].ausfahrZeit.minute){
+            parkzeitStunde -= 1
+        }
+
+        if (parkzeitStunde < b && parkzeitMinute < a) {
+            b = parkzeitStunde
+            a = parkzeitMinute
+        }
+
+        durchschnittlicheParkzeitMinute += parkzeitMinute
+        durchschnittlicheParkzeitStunde += parkzeitStunde
+
+        if (parkzeitMinute != 0) {
+            d += parkzeitStunde +1
+        }else {
+            d += parkzeitStunde
+        }
+    }
+        ueberpruefen(parkscheine, c)
+        println("Die kürzeste Parkzeit beträgt : $b Stunden und $a Minuten.")
+        durchschnittlicheParkzeit(durchschnittlicheParkzeitMinute, durchschnittlicheParkzeitStunde, park)
+        einnahmen (d)
+}
+
+
+    fun angefangeneStunden(parkzeitMinute: Int, parkzeitStunde: Int) {
+        if (parkzeitMinute > 0) {
+            println ("Sie haben ${parkzeitStunde +1} geparkt")
+        } else {
+            println("Sie haben $parkzeitStunde geparkt")
+        }
+    }
+
+    fun parkzeit(parkzeitStunde: Int, parkzeitMinute: Int){
+        var parkzeit = parkzeitStunde * 60 + parkzeitMinute
+}
+
+    fun durchschnittlicheParkzeit(durchschnittlicheParkzeitMinute : Double, durchschnittlicheParkzeitStunde : Double, park : Int) {
+        val durchschnittlicheParkzeit = (durchschnittlicheParkzeitStunde+(durchschnittlicheParkzeitMinute/60)) /park
+        println("Die durchschnittliche Parkzeit beträgt $durchschnittlicheParkzeit Stunden.")
+    }
+
+    fun einnahmen(d : Int) {
+        val p = Parkhaus (3.5)
+        println("Eingenommen wurden: ${d * p.parktarif} €.")
+    }
+
+    fun ueberpruefen (parkscheine : ArrayList<Parkschein>, c : Int): Boolean {
+        var check = 0
+        if (parkscheine[c].einfahrZeit.stunde > parkscheine[c].ausfahrZeit.stunde ||
+            parkscheine[c].einfahrZeit.stunde == parkscheine[c].ausfahrZeit.stunde &&
+            parkscheine[c].einfahrZeit.minute > parkscheine[c].ausfahrZeit.minute ||
+            parkscheine[c].einfahrZeit.stunde > 24 ||
+            parkscheine[c].einfahrZeit.stunde < 0 ||
+            parkscheine[c].einfahrZeit.minute > 60 ||
+            parkscheine[c].einfahrZeit.minute < 0
+        ) {
+            check += 1
+        }
+        if (check == 1) {
+            println("Mind. ein Parkschein ist nicht in Ordnung!")
+            return false
+        } else {
+            println("Alles in Ordnung.")
+            return true
+        }
+    }
